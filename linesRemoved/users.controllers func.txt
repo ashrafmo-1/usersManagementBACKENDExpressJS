@@ -1,0 +1,24 @@
+let { users } = require("../data/users"); 
+
+# get users from hand made object #
+// users.push({ id: users.length + 1, ...req.body }); // code show all users on post
+const user = { id: users.length + 1, ...req.body };
+users.push(user);
+
+
+# get single user from hand made object #
+// const userId = +req.params.userId;
+// const user = users.find((user) => user.id === userId);
+
+# change user data #
+const userId = +req.params.userId;
+let userIndex = users.findIndex((user) => user.id === userId);
+if (userIndex === -1) {
+  return res.status(404).json({ message: "cannot find user" });
+}
+users[userIndex] = {...users[userIndex], ...req.body};
+
+
+# del #
+const userId = +req.params.userId;
+users = users.filter((user) => user.id !== userId);

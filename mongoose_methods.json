@@ -1,0 +1,11 @@
+{
+  "findOne": "User.findOne(query)",
+  "find": "User.find(query)",
+  "findById": "User.findById(id)",
+  "findByIdAndUpdate": "User.findByIdAndUpdate(id, update, options)",
+  "findOneAndUpdate": "User.findOneAndUpdate(query, update, options)",
+  "deleteOne": "User.deleteOne(query)",
+  "deleteMany": "User.deleteMany(query)",
+  "updateOne": "User.updateOne(query, update, options)",
+  "updateMany": "User.updateMany(query, update, options)"
+}
