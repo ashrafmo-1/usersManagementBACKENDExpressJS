@@ -4,6 +4,7 @@ var cors = require('cors')
 require('dotenv').config()
 const usersRouter = require("./routes/users.route");
 const mongoose = require("mongoose");
+const httpStatus = require("./utils/http.status");
 const url = process.env.MONGO_DB_URL;
 
 mongoose.connect(url).then(() => {
@@ -18,5 +19,15 @@ app.use("/api/users", usersRouter);
 app.all('*', (req, res) => {
   res.status(404).json({ message: 'Not Found' });
 });
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+app.use((error, req, res, next) => {
+  res.status(error.statusCode || 500).json({
+    code: error.statusCode || 500,
+    message: error.statusText || 'invalid status',
+    error: error.message || 'invalid status',
+    data: null
+  });
+})
 
 app.listen(process.env.PORT);

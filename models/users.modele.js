@@ -2,17 +2,29 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  name: {
+  first_name: {
     type: String,
     required: true,
-    minlength: 3,
-    maxlength: 22,
+  },
+  last_name: {
+    type: String,
+    required: true,
   },
   email: {
     type: String,
     required: true,
-    minlength: 3,
-    maxlength: 80,
+    unique: [true, "Email already exists"],
+    validate: {
+      validator: function (v) {
+        return /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(v);
+      },
+      message: "Invalid email format",
+    },
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 8,
   },
 });
 
