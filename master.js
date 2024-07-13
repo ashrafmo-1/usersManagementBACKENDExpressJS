@@ -21,7 +21,7 @@ app.all('*', (req, res) => {
 });
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-app.use((error, req, res, next) => {
+app.use((error, res) => {
   res.status(error.statusCode || 500).json({
     code: error.statusCode || 500,
     message: error.statusText || 'invalid status',

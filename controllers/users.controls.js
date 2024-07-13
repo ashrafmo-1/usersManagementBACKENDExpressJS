@@ -4,6 +4,7 @@ const httpStatus = require("../utils/http.status");
 const asyncWrapper = require("../middlewares/asyncWrapper");
 const ERROR = require("../utils/ERROR");
 const bcrypt = require('bcryptjs');
+const jwt = require("jsonwebtoken");
 
 const register = asyncWrapper(async (req, res, next) => {
   const { first_name, last_name, email, password } = req.body;
@@ -22,9 +23,13 @@ const register = asyncWrapper(async (req, res, next) => {
     email,
     password: hashingPassword, //! not returning in response
   });
-  await Registration.save();
-  const { password: _, ...userWithoutPassword } = Registration.toObject();
-  res.status(201).json({ code: 201, message: "User registered successfully", data: userWithoutPassword  });
+  const token = await jwt.sign({email: Registration.email, id: Registration._id}, process.env.JWT_SECRET_KEY, {expiresIn: "1m"});
+  Registration.token = token;
+
+  await Registration.save(); //? save data to Database
+
+
+  res.status(201).json({ code: 201, message: "User registered successfully", data: {user: Registration}  });
 });
 
 //? login
@@ -46,7 +51,6 @@ const login = asyncWrapper(async (req, res, next) => {
   if(email && matchPassword) {
   res.json({ code: 200, message: httpStatus.OK, information: user });
   }
-
 });
 
 const getAllUsers = async (req, res) => {
