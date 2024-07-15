@@ -5,6 +5,7 @@ const asyncWrapper = require("../middlewares/asyncWrapper");
 const ERROR = require("../utils/ERROR");
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
+const generateJWTkoken = require('../utils/generateJWTtoken')
 
 const register = asyncWrapper(async (req, res, next) => {
   const { first_name, last_name, email, password } = req.body;
@@ -24,6 +25,7 @@ const register = asyncWrapper(async (req, res, next) => {
     password: hashingPassword, //! not returning in response
   });
   const token = await jwt.sign({email: Registration.email, id: Registration._id}, process.env.JWT_SECRET_KEY, {expiresIn: "1m"});
+  // const token = generateJWTkoken({email: Registration.email, id: Registration._id});
   Registration.token = token;
 
   await Registration.save(); //? save data to Database
@@ -32,7 +34,6 @@ const register = asyncWrapper(async (req, res, next) => {
   res.status(201).json({ code: 201, message: "User registered successfully", data: {user: Registration}  });
 });
 
-//? login
 const login = asyncWrapper(async (req, res, next) => {
 
   const { email, password } = req.body;
@@ -49,7 +50,9 @@ const login = asyncWrapper(async (req, res, next) => {
 
   const matchPassword = await bcrypt.compare(password, user.password);
   if(email && matchPassword) {
-  res.json({ code: 200, message: httpStatus.OK, information: user });
+    //! login Successfully
+    const token = await jwt.sign({email: user.email, id: user._id}, process.env.JWT_SECRET_KEY, {expiresIn: "1D"});
+    res.json({ code: 200, message: httpStatus.OK, information: user });
   }
 });
 
@@ -63,7 +66,6 @@ const getAllUsers = async (req, res) => {
   res.json({ code: 200, message: httpStatus.OK, users: users });
 };
 
-//? get single user
 const getSingleUser = asyncWrapper(async (req, res, next) => {
   const user = await User.findById(req.params.userId).exec();
   if (!user) {
