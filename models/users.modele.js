@@ -1,5 +1,6 @@
 // go to mongoose introduction "quick start" <==
 const mongoose = require("mongoose");
+const userRole = require("../utils/user.role");
 
 const userSchema = new mongoose.Schema({
   first_name: {
@@ -28,6 +29,11 @@ const userSchema = new mongoose.Schema({
   },
   token: {
     type: String,
+  },
+  role: {
+    type: String,
+    enum: [userRole.user, userRole.admin, userRole.manager],
+    default: userRole.user
   }
 });
 

@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken");
 const generateJWTkoken = require('../utils/generateJWTtoken')
 
 const register = asyncWrapper(async (req, res, next) => {
-  const { first_name, last_name, email, password } = req.body;
+  const { first_name, last_name, email, password, role } = req.body;
 
   const existsUser = await User.findOne({ email: email });
   if (existsUser) {
@@ -22,9 +22,10 @@ const register = asyncWrapper(async (req, res, next) => {
     first_name,
     last_name,
     email,
+    role,
     password: hashingPassword, //! not returning in response
   });
-  const token = await jwt.sign({email: Registration.email, id: Registration._id}, process.env.JWT_SECRET_KEY, {expiresIn: "1m"});
+  const token = await jwt.sign({email: Registration.email, id: Registration._id, role: Registration.role}, process.env.JWT_SECRET_KEY, {expiresIn: "1D"}, );
   // const token = generateJWTkoken({email: Registration.email, id: Registration._id});
   Registration.token = token;
 
@@ -51,7 +52,7 @@ const login = asyncWrapper(async (req, res, next) => {
   const matchPassword = await bcrypt.compare(password, user.password);
   if(email && matchPassword) {
     //! login Successfully
-    const token = await jwt.sign({email: user.email, id: user._id}, process.env.JWT_SECRET_KEY, {expiresIn: "1D"});
+    const token = await jwt.sign({email: user.email, id: user._id, role: user.role}, process.env.JWT_SECRET_KEY, {expiresIn: "1D"});
     res.json({ code: 200, message: httpStatus.OK, information: user });
   }
 });
