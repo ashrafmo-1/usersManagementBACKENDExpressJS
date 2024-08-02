@@ -1,4 +1,4 @@
-const { validationResult } = require("express-validator"); //? medile ware
+const { validationResult } = require("express-validator");
 const User = require("../models/users.modele"); //? get users data from DB server
 const httpStatus = require("../utils/http.status");
 const asyncWrapper = require("../middlewares/asyncWrapper");
